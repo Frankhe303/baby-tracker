@@ -2,12 +2,519 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>👶 宝宝记录</title>
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>宝宝记录</title>
+<style>
+:root{--bg:#f8f4f0;--tx:#2d2825;--t2:#8b7a6e;--t3:#c4b5a8;--ln:#e8e0d8;--ac:#f59e54;--f:-apple-system,'PingFang SC','Helvetica Neue',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--tx);-webkit-font-smoothing:antialiased;touch-action:manipulation;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+#app{max-width:430px;margin:0 auto;min-height:100dvh;padding:0 0 68px;position:relative}
+.sb{padding:10px 20px 2px;display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:var(--t3)}
+.hd{display:flex;align-items:center;justify-content:space-between;padding:4px 20px 2px}
+.hl{display:flex;align-items:center;gap:10px}
+.av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#fbbf7c,#f59e54);display:flex;align-items:center;justify-content:center;font-size:18px}
+.nn{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.aa{font-size:12px;color:var(--t2);margin-top:1px}
+.tg{font-size:11px;color:var(--ac);font-weight:600}
+.sr{display:flex;padding:6px 0 2px;margin:0 12px}
+.si{flex:1;text-align:center;padding:6px 0;cursor:pointer;border-radius:8px}
+.si:active{background:rgba(0,0,0,.03)}
+.si .c{font-size:18px}.si .v{font-size:20px;font-weight:700;margin:1px 0;letter-spacing:-.5px}
+.si .l{font-size:10px;color:var(--t3)}
+.dv{height:1px;background:var(--ln);margin:0 20px}
+.dw{display:flex;align-items:center;justify-content:center;padding:2px 0 0;position:relative}
+.dl{width:290px;height:290px;border-radius:50%;position:relative}
+.db{width:100%;height:100%;border-radius:50%;background:conic-gradient(#fce8d0 0deg 60deg,#d4e8d4 60deg 120deg,#d0dce8 120deg 180deg,#e8d4e8 180deg 240deg,#fce0d0 240deg 300deg,#d0e8e0 300deg 360deg);box-shadow:inset 0 1px 4px rgba(255,255,255,.6)}
+.dc{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1px;z-index:10;cursor:pointer;transition:transform .2s}
+.dc:active{transform:translate(-50%,-50%) scale(.92)}
+.de{font-size:26px;line-height:1}.dl2{font-size:9px;color:var(--t3)}
+.sc{position:absolute;top:50%;left:50%;cursor:pointer;z-index:2}
+.si2{position:absolute;width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1px;border-radius:50%;background:rgba(255,255,255,.85);transition:transform .2s;font-size:9px;font-weight:500;user-select:none}
+.si2 .ic{font-size:22px;line-height:1}.si2 .lb{font-size:8px;color:var(--t2)}
+.sc:active .si2{transform:scale(1.08)}
+.st0{width:100px;height:100px;transform:translate(-50%,-50%) rotate(-30deg) translateY(-145px) rotate(30deg)}
+.st1{width:100px;height:100px;transform:translate(-50%,-50%) rotate(30deg) translateY(-145px) rotate(-30deg)}
+.st2{width:100px;height:100px;transform:translate(-50%,-50%) rotate(90deg) translateY(-145px) rotate(-90deg)}
+.st3{width:100px;height:100px;transform:translate(-50%,-50%) rotate(150deg) translateY(-145px) rotate(-150deg)}
+.st4{width:100px;height:100px;transform:translate(-50%,-50%) rotate(210deg) translateY(-145px) rotate(-210deg)}
+.st5{width:100px;height:100px;transform:translate(-50%,-50%) rotate(270deg) translateY(-145px) rotate(-270deg)}
+.st{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:430px;z-index:100;transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.st.up{transform:translateX(-50%) translateY(0)}
+.sbg{position:fixed;inset:0;background:rgba(0,0,0,.15);z-index:99;display:none}
+.sbg.on{display:block}
+.sin2{padding:18px 20px calc(18px + env(safe-area-inset-bottom,0));background:#fff;border-radius:24px 24px 0 0}
+.sh2{width:32px;height:4px;border-radius:2px;background:var(--ln);margin:0 auto 12px}
+.sht{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.stt{font-size:16px;font-weight:700}
+.sxx{width:28px;height:28px;border:0;background:var(--bg);border-radius:50%;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t2)}
+.sg2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.so2{display:flex;flex-direction:column;align-items:center;gap:3px;padding:14px 8px;background:var(--bg);border-radius:12px;cursor:pointer;border:none;font-family:var(--f)}
+.so2:active{background:var(--ac);transform:scale(.96)}
+.so2 .ic{font-size:28px;line-height:1}.so2 .lb{font-size:12px;color:var(--t2)}
+.dr{display:flex;gap:8px;align-items:center;margin:8px 0}
+.dr label{font-size:12px;color:var(--t2);white-space:nowrap}
+.dr input{flex:1;padding:10px 12px;border:1px solid var(--ln);border-radius:10px;font-size:15px;text-align:center;outline:0;font-family:var(--f);background:var(--bg)}
+.dr input:focus{border-color:var(--ac)}
+.dg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0}
+.dg .so2{padding:10px 4px}.dg .so2 .ic{font-size:22px}.dg .so2 .lb{font-size:10px}
+.ss2{width:100%;padding:12px;border:0;border-radius:12px;background:var(--ac);color:#fff;font-size:15px;font-weight:600;cursor:pointer;margin-top:10px;font-family:var(--f)}
+.ss2:active{opacity:.8;transform:scale(.98)}
+.ts2{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(28,25,23,.9);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;white-space:nowrap;opacity:0;pointer-events:none;z-index:200}
+.ts2.on{opacity:1;transform:translateX(-50%) translateY(-4px);transition:all .35s}
+.bn2{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;justify-content:space-around;align-items:center;padding:4px 16px calc(4px + env(safe-area-inset-bottom,0));background:rgba(255,255,255,.95);border-top:1px solid var(--ln);z-index:50}
+.ni2{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:var(--t3);cursor:pointer;padding:4px 0;min-width:48px;border:0;background:0;font-family:var(--f)}
+.ni2 .ic{font-size:20px;line-height:1}.ni2.act{color:var(--ac)}
+.tl2{padding:4px 16px}.tld2{margin-bottom:16px}
+.tld2 .dt{font-size:13px;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.tld2 .dt .dw{font-size:11px;color:var(--t3);font-weight:400}
+.tli2{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--ln)}
+.tli2 .ic{font-size:18px;width:26px;text-align:center}
+.tli2 .if{flex:1}.tli2 .if .tt{font-size:13px;font-weight:500}
+.tli2 .if .td{font-size:11px;color:var(--t2);margin-top:1px}
+.tli2 .tm{font-size:11px;color:var(--t3)}
+.em{padding:40px 20px;text-align:center;color:var(--t3);font-size:14px}
+.rp2{padding:16px 20px 8px}
+.rp2 h3{font-size:12px;color:var(--t2);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.rd2{display:flex;gap:12px}
+.ri2{flex:1;text-align:center;padding:12px 4px;background:var(--bg);border-radius:10px}
+.ri2 .rv{font-size:22px;font-weight:700}.ri2 .rl{font-size:10px;color:var(--t2);margin-top:2px}
+.rc2{height:120px;margin:8px 0 4px;display:flex;align-items:flex-end;gap:4px}
+.rc2 .b{flex:1;border-radius:4px 4px 0 0;height:4%;background:var(--ac)}
+.rcl2{display:flex;justify-content:space-between;font-size:9px;color:var(--t3)}
+.se2{padding:8px 0}
+.sei{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--ln)}
+.sei .lb{font-size:14px}.sei .vl{font-size:14px;color:var(--t2);display:flex;align-items:center;gap:6px}
+.sei input{border:0;text-align:right;font-size:14px;color:var(--tx);outline:0;background:0;font-family:var(--f)}
+.sei input[type=date]{font-size:14px;color:var(--t2)}
+.seg{display:flex;gap:6px}
+.seg button{padding:4px 12px;border:1px solid var(--ln);border-radius:8px;background:0;font-size:13px;cursor:pointer;font-family:var(--f);color:var(--t2)}
+.seg button.sl{border-color:var(--ac);color:var(--ac);background:rgba(245,158,84,.06)}
+.sea{padding:12px 20px}
+.sea button{width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;background:0;font-size:14px;cursor:pointer;margin-bottom:6px;font-family:var(--f);color:var(--tx)}
+.sea button:active{background:var(--bg)}
+</style>
 </head>
 <body>
-<div id="app"></div>
-<script type="module" src="app.js"></script>
+<div id="app">
+
+<div id="ph">
+<div class="sb"><span>9:41</span><span>📶</span></div>
+<div class="hd"><div class="hl"><div class="av">👶</div><div><div class="nn" id="nm">小糯米</div><div class="aa" id="ag">6个月 · 女宝</div></div></div><div class="tg">今天</div></div>
+<div class="sr">
+<div class="si" id="sf"><div class="c">🍼</div><div class="v" id="sfv">0</div><div class="l">喂养</div></div>
+<div class="si" id="sd"><div class="c">🧷</div><div class="v" id="sdv">0</div><div class="l">尿布</div></div>
+<div class="si" id="ss"><div class="c">😴</div><div class="v" id="ssv">0h</div><div class="l">睡眠</div></div>
+<div class="si" id="sg"><div class="c">📏</div><div class="v" id="sgv">—</div><div class="l">生长</div></div>
+</div>
+<div class="dv"></div>
+<div class="dw"><div class="dl"><div class="db"></div><div class="dc" id="dcc"><div class="de">🐣</div><div class="dl2">点这里</div></div><div id="scs"></div></div></div>
+</div>
+
+<div id="pt" style="display:none">
+<div style="display:flex;align-items:center;gap:12px;padding:14px 20px 6px;border-bottom:1px solid var(--ln)"><button style="border:0;background:0;font-size:18px;cursor:pointer;padding:4px" id="b1">‹</button><div style="font-size:17px;font-weight:700">记录</div></div>
+<div class="tl2" id="tl"></div>
+</div>
+
+<div id="pr" style="display:none">
+<div style="display:flex;align-items:center;gap:12px;padding:14px 20px 6px;border-bottom:1px solid var(--ln)"><button style="border:0;background:0;font-size:18px;cursor:pointer;padding:4px" id="b2">‹</button><div style="font-size:17px;font-weight:700">报告</div></div>
+<div id="rp"></div>
+</div>
+
+<div id="ps" style="display:none">
+<div style="display:flex;align-items:center;gap:12px;padding:14px 20px 6px;border-bottom:1px solid var(--ln)"><button style="border:0;background:0;font-size:18px;cursor:pointer;padding:4px" id="b3">‹</button><div style="font-size:17px;font-weight:700">设置</div></div>
+<div class="se2" id="se"></div>
+</div>
+
+<div class="sbg" id="sbg"></div>
+<div class="st" id="st"><div class="sin2"><div class="sh2"></div><div class="sht"><div class="stt" id="stt">🍼 喂养</div><button class="sxx" id="sxx">✕</button></div><div id="shb"></div></div></div>
+<div class="ts2" id="ts2"></div>
+
+<div class="bn2">
+<button class="ni2 act" data-p="0"><div class="ic">🏠</div>首页</button>
+<button class="ni2" data-p="1"><div class="ic">📋</div>记录</button>
+<button class="ni2" data-p="2"><div class="ic">📊</div>报告</button>
+<button class="ni2" data-p="3"><div class="ic">⚙️</div>设置</button>
+</div>
+
+</div>
+
+<script>
+(function(){
+var K = 'bb4';
+function L() { try { var v = JSON.parse(localStorage.getItem(K)); if(v && v.baby && v.records) return v; } catch(e){} return {baby:{name:'小糯米',birthday:'2025-01-15',gender:'女'},records:[]}; }
+var D = L();
+function S() { try { localStorage.setItem(K, JSON.stringify(D)); } catch(e){} }
+
+function G() { var n = new Date(); return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0'); }
+function U() { return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function T(d) { if(!d || isNaN(d.getTime())) return ''; return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+function A(b) {
+  var n=new Date(),bd=new Date(b),m=(n.getFullYear()-bd.getFullYear())*12+n.getMonth()-bd.getMonth();
+  if(n.getDate()<bd.getDate()) m--;
+  if(m<1) return Math.floor((n-bd)/864e5)+'天';
+  var y=Math.floor(m/12),mo=m%12;
+  return y>0 ? y+'岁'+mo+'个月' : mo+'个月';
+}
+
+var tt = null, sti = null, sst = null, srf = false;
+
+function M(msg) {
+  var e = document.getElementById('ts2');
+  if(!e) return;
+  e.textContent = msg;
+  e.classList.add('on');
+  if(tt) clearTimeout(tt);
+  tt = setTimeout(function(){ e.classList.remove('on'); }, 1800);
+}
+
+function R(r) { r.id=U(); r.ts=Date.now(); r.date=G(); D.records.unshift(r); S(); }
+
+// Seed
+if(!D.records || D.records.length < 2) {
+  D.records = [
+    { id:U(), type:'feeding', subtype:'quick', d:{}, ts:Date.now()-7200000, date:G() },
+    { id:U(), type:'diaper', subtype:'wet', d:{}, ts:Date.now()-3600000, date:G() }
+  ];
+  S();
+}
+
+// Sectors
+var sic = ['🍼','🧷','😴','📏','🩺','🎯'], slb = ['喂养','尿布','睡眠','生长','健康','里程碑'];
+var sh = '';
+for(var i=0; i<sic.length; i++) {
+  sh += '<div class="sc st'+i+'" data-idx="'+i+'"><div class="si2"><div class="ic">'+sic[i]+'</div><div class="lb">'+slb[i]+'</div></div></div>';
+}
+document.getElementById('scs').innerHTML = sh;
+
+// CATS config
+function getCat(n) {
+  var cats = [
+    {t:'🍼 喂养',it:[{i:'🤱',l:'母乳',v:'breast'},{i:'🍶',l:'奶粉',v:'bottle'},{i:'🥣',l:'辅食',v:'solid'},{i:'⏱',l:'快速',v:'quick'}]},
+    {t:'🧷 尿布',it:[{i:'💛',l:'尿湿',v:'wet'},{i:'🤎',l:'便便',v:'dirty'},{i:'💚',l:'混合',v:'both'},{i:'✅',l:'正常',v:'ok'}]},
+    {t:'😴 睡眠',it:[{i:'⏱',l:'开始睡',v:'start'},{i:'⏹',l:'醒来',v:'stop'},{i:'🌙',l:'夜眠',v:'night'},{i:'✏️',l:'手动',v:'manual'}]},
+    {t:'📏 生长',it:[{i:'⚖️',l:'体重',v:'weight'},{i:'📐',l:'身高',v:'height'},{i:'🧠',l:'头围',v:'head'},{i:'📈',l:'曲线',v:'chart'}]},
+    {t:'🩺 健康',it:[{i:'🌡',l:'体温',v:'temp'},{i:'💊',l:'用药',v:'medicine'},{i:'🤒',l:'症状',v:'symptom'},{i:'🛁',l:'日常',v:'daily'}]},
+    {t:'🎯 里程碑',it:[{i:'🙂',l:'微笑',v:'smile'},{i:'🔄',l:'翻身',v:'roll'},{i:'🦷',l:'长牙',v:'tooth'},{i:'✏️',l:'自定义',v:'custom'}]}
+  ];
+  return cats[n] || null;
+}
+
+// Navigation
+function go(n) {
+  var pages = ['ph','pt','pr','ps'];
+  for(var i=0; i<pages.length; i++) {
+    var el = document.getElementById(pages[i]);
+    if(el) el.style.display = 'none';
+  }
+  var target = document.getElementById(pages[n]);
+  if(target) target.style.display = 'block';
+  var navs = document.querySelectorAll('.ni2');
+  for(var i=0; i<navs.length; i++) navs[i].classList.remove('act');
+  if(navs[n]) navs[n].classList.add('act');
+  if(n===0) rh();
+  if(n===1) rt();
+  if(n===2) rr();
+  if(n===3) rs();
+}
+
+var navs = document.querySelectorAll('.ni2');
+for(var i=0; i<navs.length; i++) {
+  navs[i].onclick = function() { go(parseInt(this.getAttribute('data-p'))); };
+}
+var b1 = document.getElementById('b1'); if(b1) b1.onclick = function(){ go(0); };
+var b2 = document.getElementById('b2'); if(b2) b2.onclick = function(){ go(0); };
+var b3 = document.getElementById('b3'); if(b3) b3.onclick = function(){ go(0); };
+
+// Sheet
+function os(n) {
+  var c = getCat(n);
+  if(!c) return;
+  document.getElementById('stt').textContent = c.t;
+  var b = document.getElementById('shb');
+  var h = '<div class="sg2">';
+  for(var i=0; i<c.it.length; i++) {
+    h += '<button class="so2" data-v="'+c.it[i].v+'" data-cat="'+n+'"><div class="ic">'+c.it[i].i+'</div><div class="lb">'+c.it[i].l+'</div></button>';
+  }
+  h += '</div>';
+  b.innerHTML = h;
+  var btns = b.querySelectorAll('.so2');
+  for(var i=0; i<btns.length; i++) {
+    btns[i].onclick = function() {
+      var cat = parseInt(this.getAttribute('data-cat'));
+      var val = this.getAttribute('data-v');
+      hq(cat, val);
+    };
+  }
+  document.getElementById('sbg').classList.add('on');
+  document.getElementById('st').classList.add('up');
+}
+
+function cs() {
+  document.getElementById('sbg').classList.remove('on');
+  document.getElementById('st').classList.remove('up');
+}
+var sxx = document.getElementById('sxx'); if(sxx) sxx.onclick = cs;
+var sbg = document.getElementById('sbg'); if(sbg) sbg.onclick = cs;
+
+function hq(cat, val) {
+  if(cat===0 && val==='quick') { R({type:'feeding',subtype:'quick',d:{}}); M('🍼 已记录'); cs(); rh(); return; }
+  if(cat===1 && val==='ok') { R({type:'diaper',subtype:'ok',d:{}}); M('🧷 已记录'); cs(); rh(); return; }
+  if(cat===2 && val==='start') { cs(); sls(); return; }
+  if(cat===2 && val==='stop') { cs(); slp(); return; }
+  sd(cat, val);
+}
+
+// Sleep timer
+function sls() {
+  sst = Date.now(); srf = true;
+  var el = document.getElementById('ssv');
+  if(el) el.innerHTML = '⏱<span style="color:var(--ac)">●</span>';
+  M('😴 计时开始');
+  sti = setInterval(function() {
+    var ms = Date.now() - sst;
+    var m = Math.floor(ms/60000);
+    var h = Math.floor(m/60);
+    var el = document.getElementById('ssv');
+    if(el) el.innerHTML = '⏱'+h+'h'+String(m%60).padStart(2,'0')+'m';
+  }, 1000);
+}
+function slp() {
+  if(!sst) { M('没有计时'); return; }
+  var ms = Date.now() - sst;
+  var dm = Math.round(ms/60000);
+  if(sti) { clearInterval(sti); sti = null; }
+  srf = false;
+  if(dm >= 1) { R({type:'sleep',dur:dm,note:'计时睡眠'}); M('😴 '+Math.floor(dm/60)+'h'+dm%60+'min'); }
+  else { M('太短已忽略'); }
+  sst = null; rh();
+}
+
+// Detail
+function sd(cat, val) {
+  var b = document.getElementById('shb');
+  var h = '';
+  if(cat===0) {
+    if(val==='breast') h='<div class="dg"><button class="so2" data-v="left"><div class="ic">⬅️</div><div class="lb">左</div></button><button class="so2" data-v="right"><div class="ic">➡️</div><div class="lb">右</div></button><button class="so2" data-v="both"><div class="ic">🔄</div><div class="lb">双侧</div></button></div><div class="dr"><label>⏱</label><input type="number" value="15" id="fmn"><span style="font-size:12px;color:var(--t2)">分钟</span></div><button class="ss2" id="sfb">记录母乳</button>';
+    else if(val==='bottle') h='<div class="dr"><label>🥛</label><input type="number" value="120" id="famt"><span style="font-size:12px;color:var(--t2)">ml</span></div><button class="ss2" id="sfb2">记录奶粉</button>';
+    else h='<div class="dg"><button class="so2" data-v="rice"><div class="ic">🍚</div><div class="lb">米糊</div></button><button class="so2" data-v="pumpkin"><div class="ic">🎃</div><div class="lb">南瓜</div></button><button class="so2" data-v="carrot"><div class="ic">🥕</div><div class="lb">胡萝卜</div></button></div><button class="ss2" id="sfb3">记录辅食</button>';
+  } else if(cat===1) {
+    h='<div class="dg"><button class="so2" data-v="yellow">💛黄</button><button class="so2" data-v="green">💚绿</button><button class="so2" data-v="brown">🤎褐</button></div><button class="ss2" id="sdb">记录</button>';
+  } else if(cat===2) {
+    h='<div class="dr"><label>开始</label><input type="time" id="sls2" value="13:00"><label>结束</label><input type="time" id="sle2" value="14:30"></div><div style="display:flex;gap:6px;margin:6px 0"><button class="so2" style="flex:1" data-v="nap">😴 小睡</button><button class="so2" style="flex:1" data-v="night">🌙 夜眠</button></div><button class="ss2" id="slb">记录睡眠</button>';
+  } else if(cat===3) {
+    if(val==='chart') { cs(); go(2); return; }
+    var lb = val==='weight'?'⚖️体重':(val==='height'?'📐身高':'🧠头围');
+    var un = val==='weight'?'kg':'cm';
+    var dv = val==='weight'?'6.5':'62';
+    h='<div class="dr"><label>'+lb+'</label><input type="number" step="0.1" value="'+dv+'" id="gv"><span style="font-size:12px;color:var(--t2)">'+un+'</span></div><button class="ss2" id="grb">记录</button>';
+  } else if(cat===4) {
+    if(val==='temp') h='<div class="dr"><label>🌡</label><input type="number" step="0.1" value="36.8" id="htv"><span style="font-size:12px;color:var(--t2)">℃</span></div><button class="ss2" id="hb">记录</button>';
+    else if(val==='medicine') h='<div class="dr"><label>💊</label><input placeholder="药品名" id="hmd" style="text-align:left"></div><div class="dr"><label>剂量</label><input type="number" value="1" id="hdos"><span style="font-size:12px;color:var(--t2)">滴</span></div><button class="ss2" id="hb2">记录</button>';
+    else if(val==='symptom') h='<div class="dg"><button class="so2" data-v="diarrhea"><div class="ic">💩</div><div class="lb">腹泻</div></button><button class="so2" data-v="rash"><div class="ic">🔴</div><div class="lb">湿疹</div></button><button class="so2" data-v="cough"><div class="ic">🤧</div><div class="lb">咳嗽</div></button></div><button class="ss2" id="hb3">记录</button>';
+    else h='<div class="dg"><button class="so2" data-v="bath"><div class="ic">🛁</div><div class="lb">洗澡</div></button><button class="so2" data-v="walk"><div class="ic">🌳</div><div class="lb">出门</div></button><button class="so2" data-v="tummy"><div class="ic">🤸</div><div class="lb">趴卧</div></button></div><button class="ss2" id="hb4">记录</button>';
+  } else if(cat===5) {
+    h='<div class="dg"><button class="so2" data-v="smile"><div class="ic">🙂</div><div class="lb">微笑</div></button><button class="so2" data-v="roll"><div class="ic">🔄</div><div class="lb">翻身</div></button><button class="so2" data-v="crawl"><div class="ic">🐛</div><div class="lb">爬行</div></button><button class="so2" data-v="tooth"><div class="ic">🦷</div><div class="lb">长牙</div></button></div><button class="ss2" id="msb">记录</button>';
+  }
+  b.innerHTML = h;
+  // Bind selection
+  var sels = b.querySelectorAll('.so2');
+  for(var i=0; i<sels.length; i++) {
+    sels[i].onclick = function() {
+      var all = b.querySelectorAll('.so2');
+      for(var j=0; j<all.length; j++) { all[j].style.background = 'var(--bg)'; all[j].style.color = ''; }
+      this.style.background = 'var(--ac)'; this.style.color = '#fff';
+    };
+  }
+  // Bind submit buttons
+  var sfb = document.getElementById('sfb'); if(sfb) sfb.onclick = function(){ sf('breast'); };
+  var sfb2 = document.getElementById('sfb2'); if(sfb2) sfb2.onclick = function(){ sf('bottle'); };
+  var sfb3 = document.getElementById('sfb3'); if(sfb3) sfb3.onclick = function(){ sf('solid'); };
+  var sdb = document.getElementById('sdb'); if(sdb) sdb.onclick = function(){ sd2('diaper',val); };
+  var slb = document.getElementById('slb'); if(slb) slb.onclick = function(){ sd2('sleep'); };
+  var grb = document.getElementById('grb'); if(grb) grb.onclick = function(){ sd2('growth',val); };
+  var hb = document.getElementById('hb'); if(hb) hb.onclick = function(){ sd2('health','temp'); };
+  var hb2 = document.getElementById('hb2'); if(hb2) hb2.onclick = function(){ sd2('health','medicine'); };
+  var hb3 = document.getElementById('hb3'); if(hb3) hb3.onclick = function(){ sd2('health','symptom'); };
+  var hb4 = document.getElementById('hb4'); if(hb4) hb4.onclick = function(){ sd2('health','daily'); };
+  var msb = document.getElementById('msb'); if(msb) msb.onclick = function(){ sd2('milestone'); };
+}
+
+function sf(val) {
+  if(val==='breast') {
+    var s = 'left', sel = document.querySelector('#shb .so2[style*="var(--ac)"]');
+    if(sel) s = sel.getAttribute('data-v') || 'left';
+    var m = document.getElementById('fmn'); var min = m ? m.value : 15;
+    R({type:'feeding',subtype:'breast',d:{side:s,min:parseInt(min)}});
+    M('🍼 '+s+' '+min+'分钟');
+  } else if(val==='bottle') {
+    var a = document.getElementById('famt'); var amt = a ? a.value : 120;
+    R({type:'feeding',subtype:'bottle',d:{amt:parseInt(amt)}});
+    M('🍶 '+amt+'ml');
+  } else {
+    var f = 'rice', sel = document.querySelector('#shb .so2[style*="var(--ac)"]');
+    if(sel) f = sel.getAttribute('data-v') || 'rice';
+    R({type:'feeding',subtype:'solid',d:{food:f}});
+    M('🥣 已记录');
+  }
+  cs(); rh();
+}
+
+function sd2(t, v) {
+  if(t==='diaper') {
+    var c = '', sel = document.querySelector('#shb .so2[style*="var(--ac)"]');
+    if(sel) c = sel.textContent.trim();
+    R({type:'diaper',subtype:v,d:{color:c}}); M('🧷 已记录');
+  } else if(t==='sleep') {
+    var ss = document.getElementById('sls2'); var se = document.getElementById('sle2');
+    var s = ss ? ss.value : '13:00'; var e = se ? se.value : '14:30';
+    var st2 = 'nap', sel = document.querySelector('#shb .so2[style*="var(--ac)"]');
+    if(sel) st2 = sel.getAttribute('data-v') || 'nap';
+    var sh = parseInt(s.split(':')[0]), sm = parseInt(s.split(':')[1]);
+    var eh = parseInt(e.split(':')[0]), em = parseInt(e.split(':')[1]);
+    var dur = eh*60+em - (sh*60+sm);
+    if(dur <= 0) { M('时间不对'); return; }
+    R({type:'sleep',dur:dur,stype:st2}); M('😴 '+dur+'分钟');
+  } else if(t==='growth') {
+    var gv = document.getElementById('gv'); var v2 = gv ? parseFloat(gv.value) : 0;
+    if(!v2 || v2<=0) { M('输入数值'); return; }
+    var u = v==='weight' ? 'kg' : 'cm';
+    R({type:'growth',gtype:v,val:v2,unit:u}); M('📏 '+v2+u);
+  } else if(t==='health') {
+    if(v==='temp') { var htv = document.getElementById('htv'); var t2 = htv ? htv.value : '36.8'; R({type:'health',subtype:'temp',d:{temp:t2}}); M('🌡 '+t2+'℃'); }
+    else if(v==='medicine') { var hmd = document.getElementById('hmd'); var hdos = document.getElementById('hdos'); var md = hmd ? hmd.value : ''; var ds = hdos ? hdos.value : '1'; R({type:'health',subtype:'medicine',d:{med:md,dose:ds}}); M('💊 已记录'); }
+    else if(v==='symptom') { var s2 = '', sel = document.querySelector('#shb .so2[style*="var(--ac)"]'); if(sel) s2 = sel.getAttribute('data-v')||''; R({type:'health',subtype:'symptom',d:{symptom:s2}}); M('🤒 已记录'); }
+    else { var a = '', sel = document.querySelector('#shb .so2[style*="var(--ac)"]'); if(sel) a = sel.getAttribute('data-v')||''; R({type:'health',subtype:'daily',d:{activity:a}}); M('🛁 已记录'); }
+  } else if(t==='milestone') {
+    var v2 = 'smile', sel = document.querySelector('#shb .so2[style*="var(--ac)"]');
+    if(sel) v2 = sel.getAttribute('data-v') || 'smile';
+    var lbs = {smile:'🙂微笑',roll:'🔄翻身',crawl:'🐛爬行',tooth:'🦷长牙',custom:'✏️自定义'};
+    R({type:'milestone',ms:v2,note:lbs[v2]||'里程碑'}); M('🎉 '+(lbs[v2]||'里程碑'));
+  }
+  cs(); rh();
+}
+
+// Sector clicks
+var scs = document.querySelectorAll('.sc');
+for(var i=0; i<scs.length; i++) {
+  scs[i].onclick = function() { os(parseInt(this.getAttribute('data-idx'))); };
+}
+var dcc = document.getElementById('dcc'); if(dcc) dcc.onclick = function(){ M('🐣 点扇形区开始记录'); };
+
+// Render Home
+function rh() {
+  var b = D.baby;
+  var nm = document.getElementById('nm'); if(nm) nm.textContent = b.name;
+  var ag = document.getElementById('ag'); if(ag) ag.textContent = A(b.birthday)+' · '+b.gender+'宝';
+  var t = G();
+  var fc = 0, dc = 0, slm = 0, gl = null;
+  for(var i=0; i<D.records.length; i++) {
+    if(D.records[i].date === t) {
+      if(D.records[i].type==='feeding') fc++;
+      if(D.records[i].type==='diaper') dc++;
+      if(D.records[i].type==='sleep') slm += (D.records[i].dur || 0);
+      if(D.records[i].type==='growth') gl = D.records[i];
+    }
+  }
+  var sfv = document.getElementById('sfv'); if(sfv) sfv.textContent = fc.toString();
+  var sdv = document.getElementById('sdv'); if(sdv) sdv.textContent = dc.toString();
+  if(!srf) { var ssv = document.getElementById('ssv'); if(ssv) ssv.textContent = Math.round(slm/6)/10+'h'; }
+  if(gl) { var sgv = document.getElementById('sgv'); if(sgv) sgv.textContent = gl.val+(gl.unit||''); }
+}
+
+// Render Timeline
+function rt() {
+  var w = document.getElementById('tl');
+  if(!w) return;
+  if(D.records.length === 0) { w.innerHTML = '<div class="em">还没有记录</div>'; return; }
+  var ds = {};
+  for(var i=0; i<D.records.length; i++) ds[D.records[i].date] = true;
+  var dates = Object.keys(ds).sort().reverse().slice(0, 30);
+  var h = '';
+  for(var di=0; di<dates.length; di++) {
+    var date = dates[di];
+    var items = [];
+    for(var i=0; i<D.records.length; i++) { if(D.records[i].date === date) items.push(D.records[i]); }
+    items.sort(function(a,b){ return b.ts - a.ts; });
+    var dow = ['日','一','二','三','四','五','六'][new Date(date).getDay()];
+    h += '<div class="tld2"><div class="dt">'+(date===G()?'今天':date)+' <span class="dw">周'+dow+' · '+items.length+'</span></div>';
+    for(var ii=0; ii<items.length; ii++) {
+      var r = items[ii];
+      var ic = '📝', tt = '记录', dt = '', tm = '';
+      var td2 = new Date(r.ts); if(!isNaN(td2.getTime())) tm = T(td2);
+      if(r.type==='feeding'){ic='🍼';var fm={breast:'母乳',bottle:'奶粉',solid:'辅食',quick:'快速'};tt=fm[r.subtype]||'喂养';}
+      if(r.type==='diaper'){ic='🧷';var dm={wet:'尿湿',dirty:'便便',both:'混合',ok:'正常'};tt=dm[r.subtype]||'尿布';}
+      if(r.type==='sleep'){ic='😴';tt=r.dur?Math.floor(r.dur/60)+'h'+r.dur%60+'min':'睡眠';}
+      if(r.type==='growth'){ic='📏';var gm={weight:'体重',height:'身高',head:'头围'};tt=gm[r.gtype]||'生长';dt=r.val+(r.unit||'');}
+      if(r.type==='health'){ic='🩺';var hm={temp:'体温',medicine:'用药',symptom:'症状',daily:'日常'};tt=hm[r.subtype]||'健康';}
+      if(r.type==='milestone'){ic='🎯';tt=r.note||'里程碑';}
+      h += '<div class="tli2"><div class="ic">'+ic+'</div><div class="if"><div class="tt">'+tt+'</div><div class="td">'+dt+'</div></div><div class="tm">'+tm+'</div></div>';
+    }
+    h += '</div>';
+  }
+  w.innerHTML = h;
+}
+
+// Render Report
+function rr() {
+  var w = document.getElementById('rp');
+  if(!w) return;
+  if(D.records.length === 0) { w.innerHTML = '<div class="em">暂无数据</div>'; return; }
+  var fc = 0, dc = 0, stt = 0;
+  for(var i=0; i<D.records.length; i++) {
+    if(D.records[i].type==='feeding') fc++;
+    if(D.records[i].type==='diaper') dc++;
+    if(D.records[i].type==='sleep') stt += (D.records[i].dur || 0);
+  }
+  var days = [];
+  for(var i=6; i>=0; i--) {
+    var d2 = new Date(); d2.setDate(d2.getDate()-i);
+    var ds = d2.getFullYear()+'-'+String(d2.getMonth()+1).padStart(2,'0')+'-'+String(d2.getDate()).padStart(2,'0');
+    var cnt = 0;
+    for(var j=0; j<D.records.length; j++) { if(D.records[j].date === ds) cnt++; }
+    days.push(cnt);
+  }
+  var mx = 1; for(var i=0; i<days.length; i++) { if(days[i] > mx) mx = days[i]; }
+  var bars = '';
+  for(var i=0; i<days.length; i++) {
+    bars += '<div class="b" style="height:'+Math.max(days[i]/mx*100,4)+'%"></div>';
+  }
+  var dls = '';
+  for(var i=6; i>=0; i--) {
+    var d2 = new Date(); d2.setDate(d2.getDate()-i);
+    dls += '<span>'+(d2.getMonth()+1)+'/'+d2.getDate()+'</span>';
+  }
+  w.innerHTML = '<div class="rp2"><h3>总览</h3><div class="rd2"><div class="ri2"><div class="rv">'+fc+'</div><div class="rl">🍼喂养</div></div><div class="ri2"><div class="rv">'+dc+'</div><div class="rl">🧷尿布</div></div><div class="ri2"><div class="rv">'+Math.round(stt/6)/10+'h</div><div class="rl">😴睡眠</div></div></div></div><div class="rp2"><h3>近7天</h3><div class="rc2">'+bars+'</div><div class="rcl2">'+dls+'</div></div>';
+}
+
+// Render Settings
+function rs() {
+  var w = document.getElementById('se');
+  if(!w) return;
+  var b = D.baby;
+  w.innerHTML = '<div class="sei"><div class="lb">👶 名字</div><div class="vl"><input value="'+b.name+'" id="sn"></div></div>'+
+    '<div class="sei"><div class="lb">🎂 生日</div><div class="vl"><input type="date" value="'+b.birthday+'" id="sb"></div></div>'+
+    '<div class="sei"><div class="lb">👤 性别</div><div class="seg"><button id="sgm" class="'+(b.gender==='男'?'sl':'')+'">👦男</button><button id="sgf" class="'+(b.gender==='女'?'sl':'')+'">👧女</button></div></div>'+
+    '<div class="sea"><button onclick="ed()">📤 导出数据</button><button onclick="cd()" style="color:#ef4444">🗑 清空数据</button></div>';
+  var sn = document.getElementById('sn'); if(sn) sn.onchange = function(){ D.baby.name = this.value; S(); };
+  var sb = document.getElementById('sb'); if(sb) sb.onchange = function(){ D.baby.birthday = this.value; S(); };
+  var sgm = document.getElementById('sgm'); if(sgm) sgm.onclick = function(){ D.baby.gender='男'; S(); rs(); };
+  var sgf = document.getElementById('sgf'); if(sgf) sgf.onclick = function(){ D.baby.gender='女'; S(); rs(); };
+}
+
+window.ed = function() {
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(D,null,2)], {type:'application/json'}));
+  a.download = '宝宝记录_'+G()+'.json'; a.click();
+  M('已导出');
+};
+window.cd = function() {
+  if(confirm('清空所有数据？')) { if(confirm('再次确认？')) { D.records=[]; S(); rh(); M('已清空'); } }
+};
+
+// Init
+rh();
+go(0);
+})();
+</script>
 </body>
 </html>
