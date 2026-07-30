@@ -147,6 +147,7 @@ let activePage = 'home';
 let toastTimer = null;
 let sleepTimer = null;
 let sleepStart = null;
+let sleepRunning = false; // for home page indicator
 
 // ─── Routing ────────────────────────────────────────────────────────
 function go(page, data) {
@@ -175,13 +176,28 @@ function go(page, data) {
   if (page === 'growth-chart') renderGrowthChart();
 }
 
-// ─── Toast ──────────────────────────────────────────────────────────
+// ─── Toast & Button Feedback ──────────────────────────────────────
 function showToast(msg) {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
+}
+
+// Enable iOS :active state
+function enableTouchFeedback() {
+  document.addEventListener('touchstart', function(){}, {passive: true});
+}
+
+// Add momentary button press feedback
+function pressFeedback(el) {
+  if (!el) return;
+  el.style.transform = 'scale(0.94)';
+  el.style.transition = 'transform 0.1s';
+  setTimeout(() => {
+    el.style.transform = 'scale(1)';
+  }, 100);
 }
 
 // ─── Render: Home (Dial) ────────────────────────────────────────────
@@ -193,7 +209,12 @@ function renderHome() {
 
   document.getElementById('s-feed').innerHTML = `🍼 ${st.feed}`;
   document.getElementById('s-diaper').innerHTML = `🧷 ${st.diaper}`;
-  document.getElementById('s-sleep').innerHTML = `😴 ${st.sleep}h`;
+  // Show timer indicator if sleep is running
+  if (sleepRunning) {
+    document.getElementById('s-sleep').innerHTML = `😴 ⏱ ${st.sleep}h <span style="color:var(--green);animation:pi 1s infinite;">●</span>`;
+  } else {
+    document.getElementById('s-sleep').innerHTML = `😴 ${st.sleep}h`;
+  }
   if (st.growthLast) {
     const g = st.growthLast;
     const units = { weight:'kg', height:'cm', head:'cm' };
@@ -245,33 +266,61 @@ function handleQuickAction(catIdx, val) {
 // ─── Sleep Timer ─────────────────────────────────────────────────────
 function startSleepTimer() {
   sleepStart = Date.now();
+  sleepRunning = true;
+  // Update sleep stat indicator on home page
+  const sEl = document.getElementById('s-sleep');
+  if (sEl) sEl.innerHTML = `😴 ⏱ 计时中 <span style="color:var(--green);animation:pi 1s infinite;">●</span>`;
+  
+  // Also update timer-display on sleep page if visible
+  const td = document.getElementById('timer-display');
+  if (td) td.classList.add('running');
+  
+  showToast('😴 睡眠计时开始 💤 点圆盘「醒来」停止');
+  
   sleepTimer = setInterval(() => {
     const ms = Date.now() - sleepStart;
     const m = Math.floor(ms / 60000);
     const s = Math.floor((ms % 60000) / 1000);
     const display = `${Math.floor(m/60)}h${String(m%60).padStart(2,'0')}m${String(s).padStart(2,'0')}s`;
-    document.getElementById('timer-display').textContent = display;
-    document.getElementById('timer-display').classList.add('running');
+    // Update display wherever it exists
+    const td2 = document.getElementById('timer-display');
+    if (td2) { td2.textContent = display; }
+    // Update home page sleep indicator with elapsed time
+    const homeSleep = document.getElementById('s-sleep');
+    if (homeSleep) {
+      const h = Math.floor(m/60);
+      const min = m % 60;
+      homeSleep.innerHTML = `😴 ⏱ ${h}h${String(min).padStart(2,'0')}m <span style="color:var(--green);animation:pi 1s infinite;">●</span>`;
+    }
   }, 1000);
-  showToast('😴 睡眠计时开始 💤');
 }
 
 function stopSleepTimer() {
-  if (!sleepStart) { showToast('没有正在进行的睡眠计时'); return; }
+  if (!sleepStart) {
+    showToast('⚠️ 没有正在进行的睡眠计时');
+    return;
+  }
   const ms = Date.now() - sleepStart;
   const durMin = Math.round(ms / 60000);
   clearInterval(sleepTimer);
   sleepTimer = null;
-  const display = document.getElementById('timer-display');
-  display.textContent = '00h00m00s';
-  display.classList.remove('running');
-
-  if (durMin >= 3) {
+  sleepRunning = false;
+  
+  // Reset display wherever it exists
+  const td = document.getElementById('timer-display');
+  if (td) {
+    td.textContent = '00h00m00s';
+    td.classList.remove('running');
+  }
+  
+  if (durMin >= 1) {
     addRecord({ type:'sleep', dur: durMin, note: '计时睡眠', from: (new Date(Date.now()-ms)).toISOString(), to: now() });
     showToast(`😴 已记录睡眠 ${Math.floor(durMin/60)}h${durMin%60}min`);
-    renderHome();
+  } else {
+    showToast('⏱ 计时太短（<1分钟），已忽略');
   }
   sleepStart = null;
+  renderHome();
 }
 
 // ─── Render: Record Page ─────────────────────────────────────────────
@@ -492,11 +541,11 @@ function renderSleep(body, data) {
     </div>
     <div class="rec-card">
       <h3>✏️ 手动记录</h3>
-      <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">
-        <label style="font-size:12px;color:var(--text2);">开始</label>
-        <input type="time" id="sleep-start" value="13:00" style="flex:1;padding:8px;border:1.5px solid #e0d5cd;border-radius:12px;font-size:16px;font-family:var(--font);">
-        <label style="font-size:12px;color:var(--text2);">结束</label>
-        <input type="time" id="sleep-end" value="14:30" style="flex:1;padding:8px;border:1.5px solid #e0d5cd;border-radius:12px;font-size:16px;font-family:var(--font);">
+      <div class="sleep-time-row">
+        <label>😴 开始</label>
+        <input type="time" id="sleep-start" value="13:00">
+        <label>⏹ 结束</label>
+        <input type="time" id="sleep-end" value="14:30">
       </div>
       <div class="rec-row">
         <button class="rec-btn small" data-v="nap">😴 小睡</button>
@@ -1058,6 +1107,14 @@ function init() {
   // Init growth chart type
   const gcType = document.getElementById('gc-type');
   if (gcType) gcType.value = 'weight';
+
+  // Enable iOS touch feedback
+  enableTouchFeedback();
+
+  // Bind press feedback to all buttons
+  document.querySelectorAll('button, .sector, .sub-item, .stat-item').forEach(el => {
+    el.addEventListener('click', function() { pressFeedback(this); });
+  });
 
   // Stats strip
   document.querySelectorAll('.stat-item').forEach(el => {
