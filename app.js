@@ -207,20 +207,19 @@ function renderHome() {
   document.getElementById('h-name').textContent = baby.name;
   document.getElementById('h-age').textContent = `${ageStr(baby.birthday)} · ${baby.gender}宝`;
 
-  document.getElementById('s-feed').innerHTML = `🍼 ${st.feed}`;
-  document.getElementById('s-diaper').innerHTML = `🧷 ${st.diaper}`;
-  // Show timer indicator if sleep is running
+  document.querySelector('#s-feed .sc-count').textContent = st.feed.toString();
+  document.querySelector('#s-diaper .sc-count').textContent = st.diaper.toString();
   if (sleepRunning) {
-    document.getElementById('s-sleep').innerHTML = `😴 ⏱ ${st.sleep}h <span style="color:var(--green);animation:pi 1s infinite;">●</span>`;
+    document.querySelector('#s-sleep .sc-count').innerHTML = `⏱ <span style="animation:pi 1s infinite;color:var(--green);">●</span>`;
   } else {
-    document.getElementById('s-sleep').innerHTML = `😴 ${st.sleep}h`;
+    document.querySelector('#s-sleep .sc-count').textContent = `${st.sleep}h`;
   }
   if (st.growthLast) {
     const g = st.growthLast;
     const units = { weight:'kg', height:'cm', head:'cm' };
-    document.getElementById('s-growth').innerHTML = `📏 +${g.val}${units[g.gtype]||''}`;
+    document.querySelector('#s-growth .sc-count').innerHTML = `+${g.val}${units[g.gtype]||''}`;
   } else {
-    document.getElementById('s-growth').innerHTML = `📏 —`;
+    document.querySelector('#s-growth .sc-count').textContent = '—';
   }
 }
 
@@ -283,7 +282,7 @@ function startSleepTimer() {
   sleepRunning = true;
   // Update sleep stat indicator on home page
   const sEl = document.getElementById('s-sleep');
-  if (sEl) sEl.innerHTML = `😴 ⏱ 计时中 <span style="color:var(--green);animation:pi 1s infinite;">●</span>`;
+  if (sEl) sEl.querySelector('.sc-count').innerHTML = `⏱ <span style="animation:pi 1s infinite;color:var(--green);">●</span>`;
   
   // Also update timer-display on sleep page if visible
   const td = document.getElementById('timer-display');
@@ -304,7 +303,7 @@ function startSleepTimer() {
     if (homeSleep) {
       const h = Math.floor(m/60);
       const min = m % 60;
-      homeSleep.innerHTML = `😴 ⏱ ${h}h${String(min).padStart(2,'0')}m <span style="color:var(--green);animation:pi 1s infinite;">●</span>`;
+      homeSleep.querySelector('.sc-count').innerHTML = `⏱ ${h}h${String(min).padStart(2,'0')}m <span style="animation:pi 1s infinite;color:var(--green);">●</span>`;
     }
   }, 1000);
 }
@@ -1125,15 +1124,16 @@ function init() {
   enableTouchFeedback();
 
   // Bind press feedback to buttons (NOT sectors/sub-items — they have CSS transforms)
-  document.querySelectorAll('button:not(.sector):not(.sub-item), .stat-item').forEach(el => {
+  document.querySelectorAll('button:not(.sector):not(.sub-item), .stat-card').forEach(el => {
     el.addEventListener('click', function() { pressFeedback(this); });
   });
 
-  // Stats strip
-  document.querySelectorAll('.stat-item').forEach(el => {
+  // Stats cards click
+  document.querySelectorAll('.stat-card').forEach(el => {
     el.addEventListener('click', () => {
-      const txt = el.textContent.trim();
-      showToast(`📊 ${txt}`);
+      const label = el.querySelector('.sc-label')?.textContent || '';
+      const count = el.querySelector('.sc-count')?.textContent || '';
+      showToast(`📊 ${label}: ${count}`);
     });
   });
 
@@ -1158,11 +1158,11 @@ function homeHTML() {
       </div>
       <div class="h-right syncing"><span class="dot"></span>本地存储</div>
     </div>
-    <div class="stats-strip">
-      <span class="stat-item" id="s-feed">🍼 0</span>
-      <span class="stat-item" id="s-diaper">🧷 0</span>
-      <span class="stat-item" id="s-sleep">😴 0h</span>
-      <span class="stat-item" id="s-growth">📏 —</span>
+    <div class="stats-row">
+      <div class="stat-card" id="s-feed"><div class="sc-icon">🍼</div><div class="sc-count">0</div><div class="sc-label">喂养</div></div>
+      <div class="stat-card" id="s-diaper"><div class="sc-icon">🧷</div><div class="sc-count">0</div><div class="sc-label">尿布</div></div>
+      <div class="stat-card" id="s-sleep"><div class="sc-icon">😴</div><div class="sc-count">0h</div><div class="sc-label">睡眠</div></div>
+      <div class="stat-card" id="s-growth"><div class="sc-icon">📏</div><div class="sc-count">—</div><div class="sc-label">生长</div></div>
     </div>
     <div class="dial-wrap">
       <div class="dial" id="dial">
