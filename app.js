@@ -254,6 +254,20 @@ function handleQuickAction(catIdx, val) {
   const CAT_PAGES = ['feeding','diaper','sleep','growth','health','milestone'];
   const page = CAT_PAGES[catIdx];
 
+  // Quick one-tap records (skip detail page)
+  if (page === 'feeding' && val === 'quick') {
+    addRecord({ type:'feeding', subtype:'quick', d: {} });
+    showToast('🍼 快速喂养 · 已记录');
+    renderHome();
+    return;
+  }
+  if (page === 'diaper' && val === 'ok') {
+    addRecord({ type:'diaper', subtype:'ok', d: {} });
+    showToast('🧷 尿布正常 · 已记录');
+    renderHome();
+    return;
+  }
+
   // Special fast actions
   if (page === 'sleep' && val === 'start') { startSleepTimer(); return; }
   if (page === 'sleep' && val === 'stop') { stopSleepTimer(); return; }
@@ -788,57 +802,56 @@ function renderTimeline() {
 }
 
 function renderTLItem(r) {
-  const t = new Date(r.ts);
-  const time = timeStr(t);
-  let icon, title, detail;
-  switch(r.type) {
-    case 'feeding':
-      icon = '🍼';
-      const sub = { breast:'母乳', bottle:'奶粉', solid:'辅食', quick:'快速' };
-      title = `${sub[r.subtype] || '喂养'}`;
-      if (r.subtype === 'breast') detail = `${r.d?.side==='left'?'⬅️左':r.d?.side==='right'?'➡️右':'🔄双侧'} ${r.d?.min||''}分钟`;
-      else if (r.subtype === 'bottle') detail = `${r.d?.amt||''}ml ${r.d?.brand||''}`;
-      else if (r.subtype === 'solid') detail = `${r.d?.food||''} ${r.d?.amt||''}`;
-      else detail = '已记录';
-      break;
-    case 'diaper':
-      icon = '🧷';
-      const dl = { wet:'尿湿', dirty:'便便', both:'混合', ok:'正常' };
-      title = dl[r.subtype]||'尿布';
-      detail = r.d?.color ? `颜色:${r.d.color}` : '';
-      break;
-    case 'sleep':
-      icon = '😴';
-      title = r.dur ? `${Math.floor(r.dur/60)}h${r.dur%60}min` : '睡眠';
-      detail = r.stype === 'night' ? '🌙 夜眠' : '😴 小睡';
-      break;
-    case 'growth':
-      icon = '📏';
-      const gt = { weight:'体重', height:'身高', head:'头围' };
-      title = `${gt[r.gtype]||'生长'}`;
-      detail = `${r.val}${r.unit||''}`;
-      break;
-    case 'health':
-      icon = '🩺';
-      const ht = { temp:'体温', medicine:'用药', symptom:'症状', daily:'日常' };
-      title = ht[r.subtype]||'健康';
-      if (r.subtype === 'temp') detail = `${r.d?.temp}℃`;
-      else if (r.subtype === 'medicine') detail = `${r.d?.med} ${r.d?.dose}`;
-      else if (r.subtype === 'daily') detail = r.d?.activity||'';
-      else detail = r.d?.symptom||'';
-      break;
-    case 'milestone':
-      icon = '🎯';
-      title = r.note || '里程碑';
-      detail = '';
-      break;
-    default: icon='📝'; title='记录'; detail='';
+  try {
+    const t = new Date(r.ts);
+    const time = isNaN(t.getTime()) ? '' : timeStr(t);
+    let icon = '📝', title = '记录', detail = '';
+
+    const L = {
+      feeding: { icon: '🍼', sub: { breast:'母乳', bottle:'奶粉', solid:'辅食', quick:'快速' } },
+      diaper:  { icon: '🧷', sub: { wet:'尿湿', dirty:'便便', both:'混合', ok:'正常' } },
+      sleep:   { icon: '😴' },
+      growth:  { icon: '📏', sub: { weight:'体重', height:'身高', head:'头围' } },
+      health:  { icon: '🩺', sub: { temp:'体温', medicine:'用药', symptom:'症状', daily:'日常' } },
+      milestone:{icon: '🎯' }
+    }[r.type];
+
+    if (L) {
+      icon = L.icon;
+      if (r.type === 'feeding') {
+        title = (L.sub[r.subtype] || '喂养');
+        if (r.subtype === 'breast') detail = `${r.d?.side==='left'?'⬅️左':r.d?.side==='right'?'➡️右':'🔄双侧'} ${r.d?.min||''}分钟`;
+        else if (r.subtype === 'bottle') detail = `${r.d?.amt||''}ml${r.d?.brand?' '+r.d.brand:''}`;
+        else if (r.subtype === 'solid') detail = `${r.d?.food||''} ${r.d?.amt||''}`;
+        else detail = '已记录';
+      } else if (r.type === 'diaper') {
+        title = (L.sub[r.subtype] || '尿布');
+        detail = r.d?.color ? `颜色:${r.d.color}` : '';
+      } else if (r.type === 'sleep') {
+        title = r.dur ? `${Math.floor(r.dur/60)}h${r.dur%60}min` : '睡眠';
+        detail = r.stype === 'night' ? '🌙 夜眠' : (r.note||'😴 小睡');
+      } else if (r.type === 'growth') {
+        title = (L.sub[r.gtype] || '生长');
+        detail = `${r.val}${r.unit||''}`;
+      } else if (r.type === 'health') {
+        title = (L.sub[r.subtype] || '健康');
+        if (r.subtype === 'temp') detail = `${r.d?.temp}℃`;
+        else if (r.subtype === 'medicine') detail = `${r.d?.med||''} ${r.d?.dose||''}`;
+        else if (r.subtype === 'daily') detail = r.d?.activity||'';
+        else detail = r.d?.symptom||'';
+      } else if (r.type === 'milestone') {
+        title = r.note || '里程碑';
+      }
+    }
+
+    return `<div class="tl-item" data-id="${r.id||''}">
+      <div class="tl-icon">${icon}</div>
+      <div class="tl-info"><div class="tl-title">${title}</div><div class="tl-detail">${detail}</div></div>
+      <div class="tl-time">${time}</div>
+    </div>`;
+  } catch(e) {
+    return `<div class="tl-item"><div class="tl-icon">📝</div><div class="tl-info"><div class="tl-title">记录</div></div></div>`;
   }
-  return `<div class="tl-item" data-id="${r.id}">
-    <div class="tl-icon">${icon}</div>
-    <div class="tl-info"><div class="tl-title">${title}</div><div class="tl-detail">${detail}</div></div>
-    <div class="tl-time">${time}</div>
-  </div>`;
 }
 
 // Timeline delete (long press simulation via double tap)
