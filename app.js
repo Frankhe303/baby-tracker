@@ -1124,8 +1124,8 @@ function init() {
   // Enable iOS touch feedback
   enableTouchFeedback();
 
-  // Bind press feedback to all buttons
-  document.querySelectorAll('button, .sector, .sub-item, .stat-item').forEach(el => {
+  // Bind press feedback to buttons (NOT sectors/sub-items — they have CSS transforms)
+  document.querySelectorAll('button:not(.sector):not(.sub-item), .stat-item').forEach(el => {
     el.addEventListener('click', function() { pressFeedback(this); });
   });
 
