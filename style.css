@@ -68,8 +68,11 @@ body{
 .sub-bg{position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,0.25);backdrop-filter:blur(5px);animation:fi .2s;}
 @keyframes fi{from{opacity:0}to{opacity:1}}
 .sub-items{position:absolute;top:50%;left:50%;width:180px;height:180px;transform:translate(-50%,-50%);}
-.sub-item{position:absolute;width:58px;height:58px;border-radius:50%;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1px;cursor:pointer;transition:transform .15s;animation:pop .3s cubic-bezier(.34,1.56,.64,1) both;font-size:9px;color:var(--text);font-weight:500;}
+.sub-item{position:absolute;width:62px;height:62px;border-radius:50%;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1px;cursor:pointer;transition:transform .15s;animation:pop .3s cubic-bezier(.34,1.56,.64,1) both;font-size:9px;color:var(--text);font-weight:500;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
 .sub-item:active{transform:scale(.88)!important;}
+.sub-item:active .si-icon{transform:scale(1.2);}
+/* Larger tap area via transparent ::before */
+.sub-item::before{content:'';position:absolute;inset:-8px;border-radius:50%;}
 .si-icon{font-size:20px;line-height:1;}
 .si-label{font-size:8px;color:var(--text2);}
 .si0{top:-6px;left:50%;transform:translateX(-50%);}
@@ -165,8 +168,19 @@ input[type="date"]{border:none;font-size:14px;color:var(--text);background:trans
 
 /* ── Timer ── */
 .timer-display{font-size:42px;font-weight:700;text-align:center;padding:20px 0 10px;color:var(--text);font-variant-numeric:tabular-nums;}
-.timer-display.running{color:var(--accent);}
-.timer-btn-wrap{display:flex;gap:12px;justify-content:center;padding:6px 0;}
+.timer-display.running{color:var(--accent);animation:tp 1s ease-in-out infinite;}
+@keyframes tp{0%,100%{opacity:1}50%{opacity:0.6}}
+.timer-btn-wrap{display:flex;gap:16px;justify-content:center;padding:6px 0;}
+.timer-btn-wrap .rec-btn{flex:0 1 auto;min-width:120px;padding:10px 20px;font-size:14px;}
+
+/* ── Sleep manual time row ── */
+.sleep-time-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;}
+.sleep-time-row label{font-size:12px;color:var(--text2);white-space:nowrap;flex-shrink:0;}
+.sleep-time-row input[type="time"]{flex:1;padding:10px 12px;border:1.5px solid #e0d5cd;border-radius:12px;font-size:14px;outline:none;background:#fff;font-family:var(--font);color:var(--text);min-height:44px;}
+.sleep-time-row input[type="time"]:focus{border-color:var(--accent);}
+
+/* ── Pulsing dot for timer indicator ── */
+@keyframes pi{0%,100%{opacity:1}50%{opacity:0.2}}
 
 /* ── Growth Chart ── */
 #growthChart{width:100%;height:200px;margin-top:8px;border-radius:var(--radius2);background:#fff;}
